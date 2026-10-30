@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#172554">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="OH SHIT!">
+  <title>OH SHIT! Scorekaart v4</title>
+  <style>
+    :root{--navy:#172554;--blue:#2563eb;--sky:#eff6ff;--ink:#162033;--muted:#64748b;--line:#dbe4ef;--card:#fff;--good:#087443;--good-bg:#dcfce7;--bad:#b42318;--bad-bg:#fee4e2;--gold:#a16207;--gold-bg:#fef3c7;--shadow:0 8px 24px rgba(23,37,84,.09);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:var(--ink);background:#f1f5f9}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:linear-gradient(180deg,#e7eef8 0,#f8fafc 28rem);-webkit-tap-highlight-color:transparent}
+    button,select,input{font:inherit}button,select{min-height:44px}button{border:0;border-radius:12px;padding:10px 14px;font-weight:750;cursor:pointer;background:#e2e8f0;color:var(--ink)}button:active{transform:translateY(1px)}button:disabled{opacity:.42;cursor:not-allowed}.primary{background:var(--blue);color:#fff}.danger{color:var(--bad);background:var(--bad-bg)}.ghost{background:#fff;border:1px solid var(--line)}
+    .app-header{padding:max(16px,env(safe-area-inset-top)) 16px 15px;background:linear-gradient(135deg,#172554,#1e3a8a);color:#fff}.header-inner{max-width:920px;margin:auto;display:flex;align-items:end;justify-content:space-between;gap:12px}.brand h1{font-size:clamp(25px,7vw,38px);line-height:1;margin:0;letter-spacing:.02em}.brand p{margin:6px 0 0;color:#bfdbfe;font-weight:650}.version{font-size:12px;background:rgba(255,255,255,.14);padding:5px 8px;border-radius:999px;white-space:nowrap}
+    .standings{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);box-shadow:0 4px 18px rgba(15,23,42,.08);backdrop-filter:blur(14px)}.standings-inner{max-width:920px;margin:auto;padding:9px 12px}.standings-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em}.rank-strip{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.rank-strip::-webkit-scrollbar{display:none}.rank-chip{flex:0 0 auto;display:grid;grid-template-columns:auto auto;gap:0 7px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:7px 10px;background:#fff;min-width:108px}.rank-chip.leader{border-color:#f5c451;background:#fffbeb}.rank-pos{grid-row:1/3;font-weight:900;color:var(--gold);font-size:18px}.rank-name{font-size:13px;font-weight:800;max-width:105px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rank-score{font-size:12px;color:var(--muted);font-weight:700}
+    main{max-width:920px;margin:auto;padding:12px 12px calc(30px + env(safe-area-inset-bottom))}.card{background:var(--card);border:1px solid rgba(203,213,225,.75);border-radius:16px;box-shadow:var(--shadow);padding:15px;margin-bottom:12px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.toolbar .spacer{flex:1}.status-line{display:flex;align-items:center;gap:8px;margin-top:11px;color:var(--muted);font-size:13px}.save-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px #dcfce7}.notice{border-radius:12px;padding:11px 12px;margin-top:12px;background:var(--sky);border:1px solid #bfdbfe;color:#1e3a8a;font-size:14px;line-height:1.45}.notice.warn{background:#fffbeb;border-color:#fde68a;color:#854d0e}.notice.error{background:var(--bad-bg);border-color:#fda29b;color:var(--bad)}
+    details.settings summary{cursor:pointer;font-weight:850;list-style:none;display:flex;align-items:center;justify-content:space-between;min-height:44px}details.settings summary::-webkit-details-marker{display:none}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}.field label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin:0 0 5px}.field select,.field input{width:100%;border:1px solid #bac8d8;border-radius:11px;padding:9px 10px;background:#fff;color:var(--ink)}.names{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.file-input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+    .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 3px 9px}.section-head h2{font-size:19px;margin:0}.section-head span{font-size:12px;color:var(--muted)}
+    .round-card{padding:0;overflow:hidden;scroll-margin-top:92px}.round-card.next{border:2px solid var(--blue);box-shadow:0 8px 26px rgba(37,99,235,.15)}.round-card.complete{border-color:#a7d7ba}.round-head{display:flex;align-items:center;gap:10px;padding:13px 14px;background:#f8fafc;border-bottom:1px solid var(--line)}.round-card.next .round-head{background:var(--sky)}.round-number{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--navy);color:#fff;font-weight:900;font-size:19px}.round-title{min-width:0}.round-title h3{margin:0;font-size:17px}.round-title p{margin:3px 0 0;color:var(--muted);font-size:12px;font-weight:650}.badge{margin-left:auto;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900;white-space:nowrap}.badge.next{background:var(--blue);color:#fff}.badge.done{background:var(--good-bg);color:var(--good)}.badge.wait{background:#e2e8f0;color:#475569}.round-body{padding:8px 12px 12px}.player-row{display:grid;grid-template-columns:minmax(110px,1fr) 82px 82px 64px;gap:7px;align-items:center;padding:8px 2px;border-bottom:1px solid #edf2f7}.player-row:last-child{border-bottom:0}.player-info{min-width:0}.player-name{font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.player-total{font-size:11px;color:var(--muted);margin-top:2px}.player-total strong{color:var(--ink)}.input-wrap label{display:block;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:850;margin-bottom:3px}.score-select{width:100%;border:1px solid #b8c5d5;border-radius:10px;background:#fff;color:var(--ink);padding:8px 24px 8px 8px;text-align:center;font-weight:800}.score-select.auto{background:#f0fdf4;border-color:#86efac;color:var(--good)}.points{text-align:center;font-size:13px;font-weight:900;border-radius:9px;padding:8px 3px;background:#f1f5f9;color:var(--muted)}.points.good{background:var(--good-bg);color:var(--good)}.points.bad{background:var(--bad-bg);color:var(--bad)}.round-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:9px;padding:9px 10px;border-radius:11px;background:#f8fafc;font-size:12px;color:var(--muted);font-weight:700}.round-foot strong{color:var(--ink)}.round-foot.invalid{background:var(--bad-bg);color:var(--bad)}.round-foot.valid{background:var(--good-bg);color:var(--good)}
+    .results{background:linear-gradient(140deg,#172554,#1d4ed8);color:#fff;border:0}.results h2{margin:0 0 5px;font-size:27px}.results .sub{color:#bfdbfe;margin:0 0 15px}.podium{display:grid;gap:8px}.podium-row{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:10px}.podium-row:first-child{background:rgba(250,204,21,.2);border-color:rgba(253,224,71,.5)}.podium-pos{font-size:21px;font-weight:900;color:#fde68a}.podium-name{font-weight:850}.podium-score{font-weight:900}.rules{font-size:13px;color:#475569;line-height:1.55}.rules strong{color:var(--ink)}
+    .toast{position:fixed;z-index:100;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,18px);opacity:0;pointer-events:none;transition:.2s ease;background:#172554;color:#fff;border-radius:12px;padding:11px 15px;box-shadow:0 10px 30px rgba(15,23,42,.28);max-width:calc(100vw - 28px);text-align:center;font-weight:750;font-size:14px}.toast.show{opacity:1;transform:translate(-50%,0)}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:560px){.header-inner{align-items:center}.brand p{font-size:13px}.card{border-radius:14px}.settings-grid{grid-template-columns:1fr}.names{grid-template-columns:1fr}.player-row{grid-template-columns:minmax(92px,1fr) 68px 68px 55px;gap:5px}.round-body{padding-left:8px;padding-right:8px}.player-name{font-size:14px}.score-select{padding-left:4px;padding-right:18px}.points{font-size:12px}.toolbar button{flex:1 1 auto}.toolbar .spacer{display:none}}
+    @media(min-width:700px){.names{grid-template-columns:repeat(3,minmax(0,1fr))}.round-body{padding-left:18px;padding-right:18px}.player-row{grid-template-columns:minmax(180px,1fr) 100px 100px 80px}}
+    @media print{.app-header,.standings,.toolbar,details.settings,.rules,.toast{display:none!important}body{background:#fff}.card{box-shadow:none;break-inside:avoid}.round-card{display:inline-block;width:49%;vertical-align:top}.results{display:block;width:100%}}
+  </style>
+</head>
+<body>
+  <header class="app-header"><div class="header-inner"><div class="brand"><h1>OH SHIT!</h1><p>Mobiele scorekaart</p></div><span class="version">versie 4</span></div></header>
+  <section class="standings" aria-label="Vaste tussenstand"><div class="standings-inner"><div class="standings-title"><span>Tussenstand</span><span id="progressText">Ronde 1 van 13</span></div><div id="rankStrip" class="rank-strip"></div></div></section>
+  <main>
+    <section class="card" aria-label="Spelbediening">
+      <div class="toolbar">
+        <button id="undoBtn" class="ghost" type="button">↶ Ongedaan maken</button>
+        <span class="spacer"></span>
+        <button id="exportBtn" class="ghost" type="button">Back-up maken</button>
+        <label for="importFile" class="sr-only">Back-up terugzetten</label>
+        <input id="importFile" class="file-input" type="file" accept="application/json,.json">
+        <button id="importBtn" class="ghost" type="button">Back-up terugzetten</button>
+      </div>
+      <div class="status-line"><span class="save-dot" aria-hidden="true"></span><span id="saveStatus">Automatisch bewaard op dit apparaat</span></div>
+      <div id="migrationNotice" class="notice" hidden></div>
+      <div id="appNotice" class="notice error" role="alert" hidden></div>
+    </section>
+
+    <details class="card settings" id="settingsPanel">
+      <summary>Spelers en nieuw spel <span aria-hidden="true">⌄</span></summary>
+      <div class="settings-grid">
+        <div class="field"><label for="playerCount">Aantal spelers (maximaal 10)</label><select id="playerCount"></select></div>
+        <div class="field"><label>&nbsp;</label><button id="newGameBtn" class="danger" type="button">Nieuw leeg spel</button></div>
+        <div id="nameFields" class="names"></div>
+      </div>
+    </details>
+
+    <div class="section-head"><h2>Scorekaart</h2><span>V = voorspeld · B = behaald</span></div>
+    <div id="rounds"></div>
+    <section id="results" class="card results" hidden></section>
+    <section class="card rules"><strong>Puntentelling:</strong> exact voorspeld = 10 + voorspelling². Eén slag verschil = −10 punten. Iedere extra slag verschil = nog eens −5 punten. Alle invoer wordt meteen lokaal bewaard.</section>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  (function(){
+    'use strict';
+    const VERSION=4, ROUNDS=13, MIN_PLAYERS=2, MAX_PLAYERS=10;
+    const KEY='ohshit-v4', HISTORY_KEY='ohshit-v4-history', LEGACY_KEY='ohshit-v3';
+    const $=id=>document.getElementById(id);
+    const clone=value=>JSON.parse(JSON.stringify(value));
+    const cellKey=(round,player)=>round+'_'+player;
+    let toastTimer=0, migrated=false;
+
+    function blankState(count=4){
+      return {version:VERSION,count,names:Array.from({length:MAX_PLAYERS},(_,i)=>'Speler '+(i+1)),predictions:{},actuals:{},autoZeros:{},createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+    }
+    function safeObject(value){return value&&typeof value==='object'&&!Array.isArray(value)?value:{}}
+    function normalize(raw){
+      if(!raw||typeof raw!=='object')return blankState();
+      const legacy=raw.version!==VERSION && (raw.v||raw.b);
+      const result=blankState(Math.min(MAX_PLAYERS,Math.max(MIN_PLAYERS,Number(raw.count)||4)));
+      result.names=Array.from({length:MAX_PLAYERS},(_,i)=>String(Array.isArray(raw.names)&&raw.names[i]!=null?raw.names[i]:'Speler '+(i+1)).slice(0,40));
+      const predictions=safeObject(legacy?raw.v:raw.predictions);
+      const actuals=safeObject(legacy?raw.b:raw.actuals);
+      for(let r=1;r<=ROUNDS;r++)for(let p=0;p<MAX_PLAYERS;p++){
+        const k=cellKey(r,p);
+        if(predictions[k]!==undefined&&predictions[k]!=='')result.predictions[k]=clampEntry(predictions[k],r);
+        if(actuals[k]!==undefined&&actuals[k]!=='')result.actuals[k]=clampEntry(actuals[k],r);
+      }
+      result.autoZeros=legacy?{}:safeObject(raw.autoZeros);
+      result.createdAt=typeof raw.createdAt==='string'?raw.createdAt:result.createdAt;
+      result.updatedAt=new Date().toISOString();
+      return result;
+    }
+    function clampEntry(value,round){const n=Number(value);return Number.isInteger(n)&&n>=0&&n<=round?String(n):''}
+    function load(){
+      try{const current=localStorage.getItem(KEY);if(current)return normalize(JSON.parse(current))}catch(e){}
+      try{const old=localStorage.getItem(LEGACY_KEY);if(old){migrated=true;return normalize(JSON.parse(old))}}catch(e){}
+      return blankState();
+    }
+    function loadHistory(){try{const h=JSON.parse(localStorage.getItem(HISTORY_KEY));return Array.isArray(h)?h.slice(-30):[]}catch(e){return []}}
+    let state=load(), history=loadHistory();
+    function save(){
+      state.updatedAt=new Date().toISOString();
+      try{localStorage.setItem(KEY,JSON.stringify(state));localStorage.setItem(HISTORY_KEY,JSON.stringify(history.slice(-30)));$('saveStatus').textContent='Automatisch bewaard · '+new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});$('appNotice').hidden=true}
+      catch(e){$('appNotice').hidden=false;$('appNotice').textContent='Automatisch opslaan lukt niet. Maak voor de zekerheid een JSON-back-up.'}
+    }
+    function commit(label,change){history.push({label,state:clone(state)});history=history.slice(-30);change();save();render();showToast(label)}
+    function undo(){const last=history.pop();if(!last)return;state=normalize(last.state);save();render();showToast('Ongedaan gemaakt: '+last.label.toLowerCase())}
+    function showToast(message){clearTimeout(toastTimer);const node=$('toast');node.textContent=message;node.classList.add('show');toastTimer=setTimeout(()=>node.classList.remove('show'),2300)}
+
+    function score(predicted,actual){
+      if(predicted===''||predicted===undefined||actual===''||actual===undefined)return null;
+      const difference=Math.abs(Number(predicted)-Number(actual));
+      return difference===0?10+Number(predicted)**2:-10-5*(difference-1);
+    }
+    function totalFor(player){let total=0;for(let r=1;r<=ROUNDS;r++){const k=cellKey(r,player),points=score(state.predictions[k],state.actuals[k]);if(points!==null)total+=points}return total}
+    function totals(){return Array.from({length:state.count},(_,p)=>totalFor(p))}
+    function ranking(){
+      const values=totals().map((points,player)=>({player,points,name:displayName(player)})).sort((a,b)=>b.points-a.points||a.player-b.player);
+      let previous=null,position=0;return values.map((item,index)=>{if(item.points!==previous)position=index+1;previous=item.points;return {...item,position}});
+    }
+    function displayName(player){return (state.names[player]||'').trim()||'Speler '+(player+1)}
+    function roundInfo(round){
+      let predictionsFilled=0,actualsFilled=0,sum=0;
+      for(let p=0;p<state.count;p++){const k=cellKey(round,p);if(state.predictions[k]!==undefined&&state.predictions[k]!=='')predictionsFilled++;if(state.actuals[k]!==undefined&&state.actuals[k]!==''){actualsFilled++;sum+=Number(state.actuals[k])}}
+      return {predictionsFilled,actualsFilled,sum,complete:predictionsFilled===state.count&&actualsFilled===state.count&&sum===round};
+    }
+    function nextRound(){for(let r=1;r<=ROUNDS;r++)if(!roundInfo(r).complete)return r;return null}
+    function completedRounds(){let count=0;for(let r=1;r<=ROUNDS;r++)if(roundInfo(r).complete)count++;return count}
+    function fillAutomaticZeros(round){
+      const info=roundInfo(round);if(info.sum!==round)return 0;
+      let filled=0;for(let p=0;p<state.count;p++){const k=cellKey(round,p);if(state.actuals[k]===undefined||state.actuals[k]===''){state.actuals[k]='0';state.autoZeros[k]=true;filled++}}
+      return filled;
+    }
+    function clearHiddenAutoZeros(){for(const k of Object.keys(state.autoZeros))if(!state.autoZeros[k])delete state.autoZeros[k]}
+
+    function optionMarkup(round,value){let html='<option value="">—</option>';for(let i=0;i<=round;i++)html+='<option value="'+i+'"'+(String(value)===String(i)?' selected':'')+'>'+i+'</option>';return html}
+    function escapeHtml(text){return String(text).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+    function renderStandings(){
+      $('rankStrip').innerHTML=ranking().map(item=>'<div class="rank-chip '+(item.position===1?'leader':'')+'"><span class="rank-pos">'+item.position+'</span><span class="rank-name">'+escapeHtml(item.name)+'</span><span class="rank-score">'+item.points+' punten</span></div>').join('');
+      const next=nextRound();$('progressText').textContent=next?'Volgende: ronde '+next:'Spel afgelopen';
+    }
+    function renderNames(){
+      $('playerCount').value=state.count;
+      $('nameFields').innerHTML=Array.from({length:state.count},(_,p)=>'<div class="field"><label for="name'+p+'">Speler '+(p+1)+'</label><input id="name'+p+'" data-player="'+p+'" class="name-input" maxlength="40" autocomplete="off" value="'+escapeHtml(state.names[p])+'"></div>').join('');
+      document.querySelectorAll('.name-input').forEach(input=>input.addEventListener('change',event=>{const p=Number(event.target.dataset.player),value=event.target.value.slice(0,40);if(value===state.names[p])return;commit('Naam aangepast',()=>state.names[p]=value)}));
+    }
+    function roundStatus(round,info){
+      if(info.complete)return '<span>Alle '+round+' slagen verdeeld</span><strong>Ronde voltooid</strong>';
+      if(info.sum>round)return '<span>Te veel slagen: '+info.sum+' van '+round+'</span><strong>Corrigeer de invoer</strong>';
+      const remaining=round-info.sum;
+      if(info.actualsFilled===state.count&&remaining>0)return '<span>Nog '+remaining+' '+(remaining===1?'slag':'slagen')+' niet verdeeld</span><strong>Totaal moet '+round+' zijn</strong>';
+      return '<span>Behaalde slagen: '+info.sum+' van '+round+'</span><strong>'+remaining+' resterend</strong>';
+    }
+    function renderRounds(){
+      const next=nextRound(), totalsNow=totals(), ranks=ranking().reduce((map,item)=>(map[item.player]=item.position,map),{});
+      let html='';
+      for(let r=1;r<=ROUNDS;r++){
+        const info=roundInfo(r),isNext=r===next,statusClass=info.complete?'complete':isNext?'next':'',badge=info.complete?'<span class="badge done">✓ Klaar</span>':isNext?'<span class="badge next">Volgende ronde</span>':'<span class="badge wait">Nog open</span>';
+        html+='<section class="card round-card '+statusClass+'" id="round-'+r+'"><div class="round-head"><div class="round-number">'+r+'</div><div class="round-title"><h3>Ronde '+r+'</h3><p>'+r+' '+(r===1?'slag':'slagen')+' te verdelen</p></div>'+badge+'</div><div class="round-body">';
+        for(let p=0;p<state.count;p++){
+          const k=cellKey(r,p),pred=state.predictions[k]??'',actual=state.actuals[k]??'',points=score(pred,actual),pointClass=points===null?'':points>=0?'good':'bad',pointText=points===null?'—':(points>0?'+':'')+points,auto=state.autoZeros[k]===true;
+          html+='<div class="player-row"><div class="player-info"><div class="player-name">'+escapeHtml(displayName(p))+'</div><div class="player-total">#'+ranks[p]+' · totaal <strong>'+totalsNow[p]+'</strong></div></div><div class="input-wrap"><label for="p-'+k+'">V</label><select id="p-'+k+'" class="score-select score-input" data-kind="prediction" data-round="'+r+'" data-player="'+p+'">'+optionMarkup(r,pred)+'</select></div><div class="input-wrap"><label for="a-'+k+'">B</label><select id="a-'+k+'" class="score-select score-input '+(auto?'auto':'')+'" data-kind="actual" data-round="'+r+'" data-player="'+p+'" title="'+(auto?'Automatisch als nul ingevuld':'')+'">'+optionMarkup(r,actual)+'</select></div><div class="points '+pointClass+'" aria-label="'+(points===null?'Nog geen punten':points+' punten')+'">'+pointText+'</div></div>';
+        }
+        const footClass=info.complete?'valid':info.sum>r?'invalid':'';html+='<div class="round-foot '+footClass+'">'+roundStatus(r,info)+'</div></div></section>';
+      }
+      $('rounds').innerHTML=html;
+      document.querySelectorAll('.score-input').forEach(select=>select.addEventListener('change',handleScoreChange));
+    }
+    function handleScoreChange(event){
+      const select=event.target,round=Number(select.dataset.round),player=Number(select.dataset.player),kind=select.dataset.kind,k=cellKey(round,player),value=select.value;
+      if(kind==='actual'&&value!==''){
+        let proposed=0;for(let p=0;p<state.count;p++){const pk=cellKey(round,p),v=p===player?value:state.actuals[pk];if(v!==undefined&&v!=='')proposed+=Number(v)}
+        if(proposed>round){render();showToast('Dat zijn te veel slagen. Verlaag eerst een andere speler.');return}
+      }
+      commit(kind==='prediction'?'Voorspelling aangepast':'Behaalde slagen aangepast',()=>{
+        const target=kind==='prediction'?state.predictions:state.actuals;
+        if(value==='')delete target[k];else target[k]=value;
+        if(kind==='actual'){
+          delete state.autoZeros[k];
+          if(value===''){
+            for(let p=0;p<state.count;p++){const pk=cellKey(round,p);if(state.autoZeros[pk]){delete state.actuals[pk];delete state.autoZeros[pk]}}
+          }
+          const filled=fillAutomaticZeros(round);if(filled)requestAnimationFrame(()=>showToast(filled+' resterende '+(filled===1?'nul is':'nullen zijn')+' automatisch ingevuld'));
+        }
+      });
+    }
+    function renderResults(){
+      const done=nextRound()===null,node=$('results');node.hidden=!done;if(!done){node.innerHTML='';return}
+      const list=ranking(),winners=list.filter(x=>x.position===1),title=winners.length>1?'Gedeelde winnaars: '+winners.map(x=>escapeHtml(x.name)).join(' & '):'Winnaar: '+escapeHtml(winners[0].name);
+      node.innerHTML='<h2>🏆 '+title+'</h2><p class="sub">Einduitslag na 13 rondes</p><div class="podium">'+list.map(item=>'<div class="podium-row"><span class="podium-pos">'+item.position+'</span><span class="podium-name">'+escapeHtml(item.name)+'</span><span class="podium-score">'+item.points+' pt</span></div>').join('')+'</div>';
+    }
+    function render(){clearHiddenAutoZeros();renderStandings();renderNames();renderRounds();renderResults();$('undoBtn').disabled=history.length===0;$('progressText').setAttribute('title',completedRounds()+' van '+ROUNDS+' rondes voltooid')}
+
+    function exportBackup(){
+      const payload={app:'OH SHIT! Scorekaart',formatVersion:VERSION,exportedAt:new Date().toISOString(),state:clone(state)};
+      const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='OH-SHIT-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);showToast('JSON-back-up gedownload')
+    }
+    async function importBackup(file){
+      try{
+        const parsed=JSON.parse(await file.text()),raw=parsed&&parsed.state?parsed.state:parsed,imported=normalize(raw);
+        if(!raw||(!raw.predictions&&!raw.actuals&&!raw.v&&!raw.b&&!Array.isArray(raw.names)))throw new Error('not a score file');
+        if(!confirm('Deze back-up terugzetten? Het huidige spel blijft via Ongedaan maken herstelbaar.'))return;
+        history.push({label:'Back-up terugzetten',state:clone(state)});history=history.slice(-30);state=imported;save();render();showToast('Back-up teruggezet');
+      }catch(e){$('appNotice').hidden=false;$('appNotice').textContent='Dit bestand is geen geldige OH SHIT!-back-up.'}
+      finally{$('importFile').value=''}
+    }
+    function newGame(){
+      if(!confirm('Een nieuw leeg spel starten? Je kunt dit daarna nog één stap ongedaan maken.'))return;
+      const oldNames=state.names.slice(),count=state.count;commit('Nieuw spel gestart',()=>{state=blankState(count);state.names=oldNames})
+    }
+
+    for(let count=MIN_PLAYERS;count<=MAX_PLAYERS;count++){const option=document.createElement('option');option.value=count;option.textContent=count;$('playerCount').appendChild(option)}
+    $('playerCount').addEventListener('change',event=>{const count=Number(event.target.value);commit('Aantal spelers aangepast',()=>state.count=count)});
+    $('undoBtn').addEventListener('click',undo);$('exportBtn').addEventListener('click',exportBackup);$('importBtn').addEventListener('click',()=>$('importFile').click());$('importFile').addEventListener('change',event=>event.target.files[0]&&importBackup(event.target.files[0]));$('newGameBtn').addEventListener('click',newGame);
+    window.addEventListener('storage',event=>{if(event.key===KEY&&event.newValue){state=normalize(JSON.parse(event.newValue));render();showToast('Spel bijgewerkt vanuit een ander tabblad')}});
+    window.addEventListener('beforeunload',save);
+    if(migrated){save();$('migrationNotice').hidden=false;$('migrationNotice').innerHTML='<strong>Je v3-spel is veilig overgenomen.</strong><br>De oorspronkelijke v3-opslag is niet verwijderd. Maak eventueel ook een JSON-back-up.'}
+    else save();
+    render();
+    window.OHSHIT_TEST={score,normalize,roundInfo,ranking,fillAutomaticZeros,getState:()=>clone(state),setState:value=>{state=normalize(value);history=[];render()}};
+  })();
+  </script>
+</body>
+</html>
