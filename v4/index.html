@@ -213,8 +213,15 @@
       const values=activePlayers(round).map(p=>p===player?value:state.predictions[cellKey(round,p)]);
       return values.every(v=>v!==undefined&&v!=='')&&values.reduce((sum,v)=>sum+Number(v),0)===round;
     }
+    function forbiddenPrediction(round,player){
+      if(round<5)return null;
+      const players=activePlayers(round),last=biddingOrder(round).slice(-1)[0];
+      if(state.keepDealOrder&&player!==last)return null;
+      let sum=0;for(const p of players){if(p===player)continue;const value=state.predictions[cellKey(round,p)];if(value===undefined||value==='')return null;sum+=Number(value)}
+      const forbidden=round-sum;return Number.isInteger(forbidden)&&forbidden>=0&&forbidden<=round?forbidden:null;
+    }
 
-    function optionMarkup(round,value){let html='<option value="">—</option>';for(let i=0;i<=round;i++)html+='<option value="'+i+'"'+(String(value)===String(i)?' selected':'')+'>'+i+'</option>';return html}
+    function optionMarkup(round,value,forbidden=null){let html='<option value="">—</option>';for(let i=0;i<=round;i++){if(i===forbidden)continue;html+='<option value="'+i+'"'+(String(value)===String(i)?' selected':'')+'>'+i+'</option>'}return html}
     function escapeHtml(text){return String(text).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
     function renderStandings(){
       $('rankStrip').innerHTML=ranking().map(item=>{const out=state.eliminated[item.player];return '<div class="rank-chip '+(out?'eliminated':item.position===1?'leader':'')+'" title="'+(out?'Afgevallen vóór ronde '+out:'')+'"><span class="rank-pos">'+(item.position===1&&!out?'👑':'')+item.position+'</span><span class="rank-name">'+escapeHtml(item.name)+'</span><span class="rank-score">'+item.points+' punten'+(out?' · afgevallen':'')+'</span></div>'}).join('');
@@ -269,8 +276,8 @@
         html+='<details class="card round-card '+statusClass+'" id="round-'+r+'" data-round="'+r+'" '+(open?'open':'')+'><summary class="round-head"><div class="round-number">'+r+'</div><div class="round-title"><h3>Ronde '+r+'</h3><p>'+r+' '+(r===1?'slag':'slagen')+' · '+info.players.length+' actieve '+(info.players.length===1?'speler':'spelers')+'</p></div>'+badge+'</summary><div class="round-body">';
         const rowPlayers=state.keepDealOrder?order:info.players;
         for(const p of rowPlayers){
-          const k=cellKey(r,p),pred=state.predictions[k]??'',actual=state.actuals[k]??'',points=score(pred,actual),pointClass=points===null?'':points>=0?'good':'bad',pointText=points===null?'—':(points>0?'+':'')+points,auto=state.autoZeros[k]===true,bidPosition=order.indexOf(p)+1,predictionLocked=locked||(isCurrent&&state.keepDealOrder&&!predictionEditable(r,p)),turnText=p===dealer?'Deler · '+bidPosition+'e bieder':bidPosition+'e bieder',turnMarkup=state.keepDealOrder?'<span class="'+(p===dealer?'dealer-turn':'bid-turn')+'">'+turnText+'</span> · ':'';
-          html+='<div class="player-row"><div class="player-info"><div class="player-name">'+escapeHtml(displayName(p))+'</div><div class="player-total">'+turnMarkup+'#'+ranks[p]+' · totaal <strong>'+totalsNow[p]+'</strong></div></div><div class="input-wrap"><label for="p-'+k+'">V</label><select id="p-'+k+'" class="score-select score-input" data-kind="prediction" data-round="'+r+'" data-player="'+p+'" title="'+(predictionLocked&&!locked?'Eerst is '+escapeHtml(displayName(nextBidder(r)))+' aan de beurt':'')+'" '+(predictionLocked?'disabled':'')+'>'+optionMarkup(r,pred)+'</select></div><div class="input-wrap"><label for="a-'+k+'">B</label><select id="a-'+k+'" class="score-select score-input '+(auto?'auto':'')+'" data-kind="actual" data-round="'+r+'" data-player="'+p+'" title="'+(auto?'Automatisch als nul ingevuld':'')+'" '+(locked?'disabled':'')+'>'+optionMarkup(r,actual)+'</select></div><div class="points '+pointClass+'" aria-label="'+(points===null?'Nog geen punten':points+' punten')+'">'+pointText+'</div></div>';
+          const k=cellKey(r,p),pred=state.predictions[k]??'',actual=state.actuals[k]??'',points=score(pred,actual),pointClass=points===null?'':points>=0?'good':'bad',pointText=points===null?'—':(points>0?'+':'')+points,auto=state.autoZeros[k]===true,bidPosition=order.indexOf(p)+1,predictionLocked=locked||(isCurrent&&state.keepDealOrder&&!predictionEditable(r,p)),turnText=p===dealer?'Deler · '+bidPosition+'e bieder':bidPosition+'e bieder',turnMarkup=state.keepDealOrder?'<span class="'+(p===dealer?'dealer-turn':'bid-turn')+'">'+turnText+'</span> · ':'',forbidden=forbiddenPrediction(r,p);
+          html+='<div class="player-row"><div class="player-info"><div class="player-name">'+escapeHtml(displayName(p))+'</div><div class="player-total">'+turnMarkup+'#'+ranks[p]+' · totaal <strong>'+totalsNow[p]+'</strong></div></div><div class="input-wrap"><label for="p-'+k+'">V</label><select id="p-'+k+'" class="score-select score-input" data-kind="prediction" data-round="'+r+'" data-player="'+p+'" title="'+(predictionLocked&&!locked?'Eerst is '+escapeHtml(displayName(nextBidder(r)))+' aan de beurt':forbidden!==null?forbidden+' is hier niet toegestaan':'')+'" '+(predictionLocked?'disabled':'')+'>'+optionMarkup(r,pred,forbidden)+'</select></div><div class="input-wrap"><label for="a-'+k+'">B</label><select id="a-'+k+'" class="score-select score-input '+(auto?'auto':'')+'" data-kind="actual" data-round="'+r+'" data-player="'+p+'" title="'+(auto?'Automatisch als nul ingevuld':'')+'" '+(locked?'disabled':'')+'>'+optionMarkup(r,actual)+'</select></div><div class="points '+pointClass+'" aria-label="'+(points===null?'Nog geen punten':points+' punten')+'">'+pointText+'</div></div>';
         }
         const footClass=info.complete?'valid':info.sum>r||!info.predictionValid?'invalid':info.sum<r&&info.actualsFilled===info.players.length?'warning':'';
         html+=bidInformation(r,info)+'<div class="round-foot '+footClass+'">'+roundStatus(r,info)+'</div>';
@@ -351,7 +358,7 @@
     window.addEventListener('beforeunload',save);
     ensureEliminations();save();
     render();
-    window.OHSHIT_TEST={score,normalize,roundInfo,ranking,fillAutomaticZeros,ensureEliminations,invalidPredictionTotal,eliminatePlayer,activePlayers,dealerForRound,biddingOrder,nextBidder,predictionEditable,canAdvance,advanceRound,firstIncompleteRound,getPendingElimination:()=>clone(pendingElimination),getState:()=>clone(state),setState:value=>{state=normalize(value);history=[];ensureEliminations();render()}};
+    window.OHSHIT_TEST={score,normalize,roundInfo,ranking,fillAutomaticZeros,ensureEliminations,invalidPredictionTotal,forbiddenPrediction,optionMarkup,eliminatePlayer,activePlayers,dealerForRound,biddingOrder,nextBidder,predictionEditable,canAdvance,advanceRound,firstIncompleteRound,getPendingElimination:()=>clone(pendingElimination),getState:()=>clone(state),setState:value=>{state=normalize(value);history=[];ensureEliminations();render()}};
   })();
   </script>
 </body>
